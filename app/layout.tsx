@@ -5,6 +5,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "AI 행동 심리학 코칭",
   description: "실전에서 바로 쓰는 행동 전략 AI",
+  other: {
+    'google-adsense-account': 'ca-pub-7868027691486706',
+  },
 };
 
 export default function RootLayout({
@@ -14,12 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <head>
-        <meta name="google-adsense-account" content="ca-pub-7868027691486706" />
-
+      <body className="antialiased">
         {/* Google Analytics */}
         <Script
-          async
           src="https://www.googletagmanager.com/gtag/js?id=G-D58F0B101S"
           strategy="afterInteractive"
         />
@@ -31,8 +31,7 @@ export default function RootLayout({
             gtag('config', 'G-D58F0B101S');
           `}
         </Script>
-      </head>
-      <body className="antialiased">
+
         {children}
       </body>
     </html>
