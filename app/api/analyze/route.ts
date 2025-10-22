@@ -55,9 +55,45 @@ const SYSTEM_PROMPT = `당신은 행동 심리학 전문가입니다.
 [장기적 관점의 조언]
 `;
 
+// 카테고리별 컨텍스트 추가
+function getCategoryContext(category: string | null): string {
+  switch (category) {
+    case 'workplace':
+      return `상황 컨텍스트: 직장 환경 (회의, 협상, 갈등)
+중요 요소:
+- 직업적 관계와 위계 고려
+- 장기적 커리어 영향 분석
+- 전문성과 감정의 균형
+- 조직 내 평판 관리`;
+
+    case 'relationship':
+      return `상황 컨텍스트: 연애 관계 (데이트, 썸, 관계)
+중요 요소:
+- 상대방 감정과 신뢰 구축
+- 관계의 단계와 친밀도 고려
+- 비언어적 신호의 중요성
+- 장기적 관계 발전 가능성`;
+
+    case 'social':
+      return `상황 컨텍스트: 대인관계 (친구, 가족, 지인)
+중요 요소:
+- 관계의 역사와 맥락 이해
+- 사회적 규범과 예의
+- 상호 존중과 경계 설정
+- 감정적 유대 유지`;
+
+    default:
+      return `상황 컨텍스트: 일반적 대인관계
+중요 요소:
+- 상황별 적절한 행동 선택
+- 상대방 반응 관찰과 대응
+- 관계 유지와 자존감 보호의 균형`;
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const { situation } = await request.json();
+    const { situation, category } = await request.json();
 
     if (!situation || situation.trim().length === 0) {
       return NextResponse.json(
@@ -66,8 +102,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // 카테고리별 추가 컨텍스트
+    const categoryContext = getCategoryContext(category);
+
     // 프롬프트 생성
-    const fullPrompt = `${SYSTEM_PROMPT}\n\n다음 상황에 대한 구체적인 행동 전략을 제시해주세요:\n\n${situation}`;
+    const fullPrompt = `${SYSTEM_PROMPT}\n\n${categoryContext}\n\n다음 상황에 대한 구체적인 행동 전략을 제시해주세요:\n\n${situation}`;
 
     // Gemini API 호출 (새로운 방식)
     const response = await ai.models.generateContent({
@@ -77,12 +116,9 @@ export async function POST(request: NextRequest) {
 
     const analysis = response.text;
 
-    // 상황 분류
-    const category = categorize(situation);
-
     return NextResponse.json({
       analysis,
-      category,
+      category: category || 'general',
       timestamp: new Date().toISOString(),
       provider: 'gemini-2.0',
     });
@@ -99,19 +135,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
-
-// 간단한 카테고리 분류 함수
-function categorize(situation: string): string {
-  const workplace = ['회의', '직장', '상사', '동료', '업무', '협상', '연봉'];
-  const relationship = ['데이트', '연애', '썸', '애인', '남자친구', '여자친구', '만남'];
-  const social = ['친구', '가족', '지인', '모임', '대화'];
-
-  const lower = situation.toLowerCase();
-
-  if (workplace.some(keyword => lower.includes(keyword))) return 'workplace';
-  if (relationship.some(keyword => lower.includes(keyword))) return 'relationship';
-  if (social.some(keyword => lower.includes(keyword))) return 'social';
-
-  return 'general';
 }

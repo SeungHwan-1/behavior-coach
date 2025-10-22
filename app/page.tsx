@@ -37,7 +37,7 @@ export default function Home() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ situation }),
+        body: JSON.stringify({ situation, category: selectedCategory }),
       });
 
       const data = await response.json();
