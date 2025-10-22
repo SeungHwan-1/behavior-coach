@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import GoogleAd from '@/components/GoogleAd';
 
 type Category = 'workplace' | 'relationship' | 'social' | null;
 
@@ -69,15 +68,6 @@ export default function Home() {
             </span>
           </div>
         </header>
-
-        {/* 상단 광고 배너 */}
-        <div className="mb-8">
-          <GoogleAd
-            slot="1234567890"
-            format="horizontal"
-            className="rounded-xl overflow-hidden"
-          />
-        </div>
 
         {/* 카테고리 선택 */}
         <div className="mb-6">
@@ -159,36 +149,6 @@ export default function Home() {
             </div>
           </div>
         )}
-
-        {/* 중간 광고 (결과 후) */}
-        {result && (
-          <div className="mb-8">
-            <GoogleAd
-              slot="9876543210"
-              format="auto"
-              className="rounded-xl overflow-hidden"
-            />
-          </div>
-        )}
-
-        {/* 하단 광고 */}
-        <div className="mb-8">
-          <GoogleAd
-            slot="5555555555"
-            format="horizontal"
-            className="rounded-xl overflow-hidden"
-          />
-        </div>
-
-        {/* 사이드바 광고 (데스크톱) */}
-        <div className="hidden lg:block fixed right-4 top-1/2 -translate-y-1/2 w-40">
-          <GoogleAd
-            slot="7777777777"
-            format="vertical"
-            responsive={false}
-            className="rounded-xl overflow-hidden"
-          />
-        </div>
       </div>
     </div>
   );
